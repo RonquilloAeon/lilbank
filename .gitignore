@@ -1,4 +1,21 @@
-build
+### Gradle ###
 .gradle
-.idea
-*.iml
+build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache
+
+### Gradle Patch ###
+**/build/
+
+### IDE ###
+.idea/
+
+### Misc ###
+.DS_Store

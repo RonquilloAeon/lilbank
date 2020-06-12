@@ -14,18 +14,19 @@ fun getBank() : Bank {
     return Bank("Bank of the Universe")
 }
 
-fun createAccount(bank: Bank) {
+fun createAccount(bank: Bank, repository: AccountRepository) {
     println("Create new account for ${bank.name}")
 
     print("Name: ")
     val name = readLine()!!
     val account = Account(name=name)
     bank.addAccount(account)
+    repository.save(account)
 
     println("Account ${account.name} with id ${account.id} created")
 }
 
-fun deposit(bank: Bank) {
+fun deposit(bank: Bank, repository: AccountRepository) {
     print("Account id: ")
     val accountId = try { readLine()!!.toInt() } catch (e: NumberFormatException) { println("Invalid int") }
     print("Amount: ")
@@ -36,8 +37,15 @@ fun deposit(bank: Bank) {
 
         if (account != null) {
             account.deposit(amount)
+            repository.save(account)
             println("Deposited $amount! Balance is now ${account.balance}")
         }
+    }
+}
+
+fun listAccounts(repository: AccountRepository) {
+    repository.list().forEach {
+        it.printInfo()
     }
 }
 
@@ -45,18 +53,20 @@ fun main() {
     val bank = getBank()
     println("Welcome to da '${bank.name}'!")
 
+    // Load accounts
     val accountRepo = AccountRepository()
     accountRepo.list().forEach {
         bank.addAccount(it)
-        it.printInfo()
     }
 
     while (true) {
-        print("Options:\n1) Create new account\n2) Deposit\n3) Withdraw\n> ")
+        println("----")
+        print("Options:\n1) Create new account\n2) List accounts\n3) Deposit\n4) Withdraw\n> ")
 
         when (try { readLine()!!.toInt() } catch (e: NumberFormatException) { println("Invalid int") }) {
-            1 -> createAccount(bank)
-            2 -> deposit(bank)
+            1 -> createAccount(bank, accountRepo)
+            2 -> listAccounts(accountRepo)
+            3 -> deposit(bank, accountRepo)
         }
     }
 }

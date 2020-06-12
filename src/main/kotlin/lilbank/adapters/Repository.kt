@@ -1,13 +1,15 @@
 package lilbank.adapters
 
+import Account
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Klaxon
+import com.beust.klaxon.json
+import java.io.BufferedWriter
 import java.io.File
+import java.io.FileWriter
 import java.io.StringReader
 import java.math.BigDecimal
 
-import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Klaxon
-
-import Account
 
 data class AccountDto (val id: Int, val name: String, val balance: String)
 
@@ -30,6 +32,12 @@ class AccountRepository {
         return accounts
     }
 
+    private fun saveFile(content: String) {
+        val writer = BufferedWriter(FileWriter(fileName))
+        writer.write(content)
+        writer.close()
+    }
+
     fun get(id: Int) : Account? {
         val accounts = loadFile()
         return accounts.get(id)
@@ -41,7 +49,19 @@ class AccountRepository {
         return accountList
     }
 
-    fun save() {
+    fun save(account: Account) {
+        val accounts = loadFile()
+        accounts[account.id] = account
 
+        val data = JsonObject()
+
+        for (acct: Account in accounts.values) {
+            data.put(
+                acct.id.toString(),
+                JsonObject(mapOf(Pair("id", acct.id), Pair("name", acct.name), Pair("balance", acct.balance.toString())))
+            )
+        }
+
+        saveFile(data.toJsonString())
     }
 }

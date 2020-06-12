@@ -14,13 +14,13 @@ fun getBank() : Bank {
     return Bank("Bank of the Universe")
 }
 
-fun getAccountIdFromUser() : Any {
-    print("Account id: ")
+fun getAccountIdFromUser(message: String = "Account id: ") : Any {
+    print(message)
     return try { readLine()!!.toInt() } catch (e: NumberFormatException) { println("Invalid int") }
 }
 
-fun getAmountFromUser() : Any {
-    print("Amount: ")
+fun getAmountFromUser(message: String = "Amount: ") : Any {
+    print(message)
     return try { readLine()!!.toBigDecimal() } catch (e: NumberFormatException) { println("Invalid currency") }
 }
 
@@ -57,6 +57,26 @@ fun listAccounts(repository: AccountRepository) {
     }
 }
 
+fun transfer(bank: Bank, repository: AccountRepository) {
+    val fromAccountId = getAccountIdFromUser(message = "From account id: ")
+    val toAccountId = getAccountIdFromUser(message = "To account id: ")
+    val amount = getAmountFromUser()
+
+    if (fromAccountId is Int && toAccountId is Int && amount is BigDecimal) {
+        val fromAccount = bank.accounts[fromAccountId]
+        val toAccount = bank.accounts[toAccountId]
+
+        if (fromAccount != null && toAccount != null) {
+            // TODO balance checks
+            fromAccount.withdraw(amount)
+            toAccount.deposit(amount)
+            repository.save(fromAccount)
+            repository.save(toAccount)
+            println("Transferred $amount!")
+        }
+    }
+}
+
 fun withdraw(bank: Bank, repository: AccountRepository) {
     val accountId = getAccountIdFromUser()
     val amount = getAmountFromUser()
@@ -84,13 +104,14 @@ fun main() {
 
     while (true) {
         println("----")
-        print("Options:\n1) Create new account\n2) List accounts\n3) Deposit\n4) Withdraw\n> ")
+        print("Options:\n1) Create new account\n2) List accounts\n3) Deposit\n4) Withdraw\n5) Transfer\n> ")
 
         when (try { readLine()!!.toInt() } catch (e: NumberFormatException) { println("Invalid int") }) {
             1 -> createAccount(bank, accountRepo)
             2 -> listAccounts(accountRepo)
             3 -> deposit(bank, accountRepo)
             4 -> withdraw(bank, accountRepo)
+            5 -> transfer(bank, accountRepo)
         }
     }
 }

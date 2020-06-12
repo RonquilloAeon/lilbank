@@ -3,6 +3,7 @@ My first Kotlin application. Gotta learn somehow!
 
 # TODO
 - [x] Withdrawals
-- [ ] Transfers
+- [x] Transfers
 - [ ] Closing accounts
+- [ ] Testing
 - [ ] Error handling

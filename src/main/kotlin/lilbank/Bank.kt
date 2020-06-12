@@ -26,4 +26,8 @@ class Bank(val name: String) {
     fun addAccount(account: Account) {
         accounts[account.id] = account
     }
+
+    fun removeAccount(id: Int) {
+        accounts.remove(id)
+    }
 }

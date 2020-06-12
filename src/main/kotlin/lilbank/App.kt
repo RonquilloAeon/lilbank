@@ -36,6 +36,18 @@ fun createAccount(bank: Bank, repository: AccountRepository) {
     println("Account ${account.name} with id ${account.id} created")
 }
 
+fun closeAccount(bank: Bank, repository: AccountRepository) {
+    val accountId = getAccountIdFromUser()
+
+    if (accountId is Int) {
+        repository.delete(accountId)
+
+        // TODO only remove from bank if successfully removed from repo
+        bank.removeAccount(accountId)
+        println("Account $accountId closed!")
+    }
+}
+
 fun deposit(bank: Bank, repository: AccountRepository) {
     val accountId = getAccountIdFromUser()
     val amount = getAmountFromUser()
@@ -104,7 +116,7 @@ fun main() {
 
     while (true) {
         println("----")
-        print("Options:\n1) Create new account\n2) List accounts\n3) Deposit\n4) Withdraw\n5) Transfer\n> ")
+        print("Options:\n1) Create new account\n2) List accounts\n3) Deposit\n4) Withdraw\n5) Transfer\n6) Close account\n> ")
 
         when (try { readLine()!!.toInt() } catch (e: NumberFormatException) { println("Invalid int") }) {
             1 -> createAccount(bank, accountRepo)
@@ -112,6 +124,7 @@ fun main() {
             3 -> deposit(bank, accountRepo)
             4 -> withdraw(bank, accountRepo)
             5 -> transfer(bank, accountRepo)
+            6 -> closeAccount(bank, accountRepo)
         }
     }
 }

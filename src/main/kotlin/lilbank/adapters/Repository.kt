@@ -37,6 +37,35 @@ class AccountRepository {
         writer.close()
     }
 
+    private fun serializeDataToJson(accounts: MutableMap<Int, Account>) : String {
+        val data = JsonObject()
+
+        for (acct: Account in accounts.values) {
+            data.put(
+                    acct.id.toString(),
+                    JsonObject(mapOf(Pair("id", acct.id), Pair("name", acct.name), Pair("balance", acct.balance.toString())))
+            )
+        }
+
+        return data.toJsonString()
+    }
+
+    fun delete(id: Int) {
+        val accounts = loadFile()
+        val account = accounts.get(id)
+
+        if (account != null) {
+            if (account.balance.compareTo(BigDecimal.ZERO) == 0) {
+                accounts.remove(id)
+
+                saveFile(serializeDataToJson(accounts))
+                println("Removed account $id")
+            } else {
+                println("Account $id cannot be removed because it has a balance of ${account.balance}")
+            }
+        }
+    }
+
     fun get(id: Int) : Account? {
         val accounts = loadFile()
         return accounts.get(id)
@@ -52,15 +81,6 @@ class AccountRepository {
         val accounts = loadFile()
         accounts[account.id] = account
 
-        val data = JsonObject()
-
-        for (acct: Account in accounts.values) {
-            data.put(
-                acct.id.toString(),
-                JsonObject(mapOf(Pair("id", acct.id), Pair("name", acct.name), Pair("balance", acct.balance.toString())))
-            )
-        }
-
-        saveFile(data.toJsonString())
+        saveFile(serializeDataToJson(accounts))
     }
 }

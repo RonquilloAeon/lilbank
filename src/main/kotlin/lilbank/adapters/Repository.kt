@@ -3,7 +3,6 @@ package lilbank.adapters
 import Account
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
-import com.beust.klaxon.json
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -44,7 +43,7 @@ class AccountRepository {
     }
 
     fun list() : MutableList<Account> {
-        var accountList = mutableListOf<Account>()
+        val accountList = mutableListOf<Account>()
         accountList.addAll(loadFile().values.map { x -> x })
         return accountList
     }

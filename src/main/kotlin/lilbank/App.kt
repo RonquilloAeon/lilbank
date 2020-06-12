@@ -14,6 +14,16 @@ fun getBank() : Bank {
     return Bank("Bank of the Universe")
 }
 
+fun getAccountIdFromUser() : Any {
+    print("Account id: ")
+    return try { readLine()!!.toInt() } catch (e: NumberFormatException) { println("Invalid int") }
+}
+
+fun getAmountFromUser() : Any {
+    print("Amount: ")
+    return try { readLine()!!.toBigDecimal() } catch (e: NumberFormatException) { println("Invalid currency") }
+}
+
 fun createAccount(bank: Bank, repository: AccountRepository) {
     println("Create new account for ${bank.name}")
 
@@ -27,10 +37,8 @@ fun createAccount(bank: Bank, repository: AccountRepository) {
 }
 
 fun deposit(bank: Bank, repository: AccountRepository) {
-    print("Account id: ")
-    val accountId = try { readLine()!!.toInt() } catch (e: NumberFormatException) { println("Invalid int") }
-    print("Amount: ")
-    val amount = try { readLine()!!.toBigDecimal() } catch (e: NumberFormatException) { println("Invalid currency") }
+    val accountId = getAccountIdFromUser()
+    val amount = getAmountFromUser()
 
     if (accountId is Int && amount is BigDecimal) {
         val account = bank.accounts[accountId]
@@ -46,6 +54,21 @@ fun deposit(bank: Bank, repository: AccountRepository) {
 fun listAccounts(repository: AccountRepository) {
     repository.list().forEach {
         it.printInfo()
+    }
+}
+
+fun withdraw(bank: Bank, repository: AccountRepository) {
+    val accountId = getAccountIdFromUser()
+    val amount = getAmountFromUser()
+
+    if (accountId is Int && amount is BigDecimal) {
+        val account = bank.accounts[accountId]
+
+        if (account != null) {
+            account.withdraw(amount)
+            repository.save(account)
+            println("Withdrew $amount! Balance is now ${account.balance}")
+        }
     }
 }
 
@@ -67,6 +90,7 @@ fun main() {
             1 -> createAccount(bank, accountRepo)
             2 -> listAccounts(accountRepo)
             3 -> deposit(bank, accountRepo)
+            4 -> withdraw(bank, accountRepo)
         }
     }
 }

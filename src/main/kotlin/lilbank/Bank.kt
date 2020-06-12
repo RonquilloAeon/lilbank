@@ -1,11 +1,10 @@
 import java.math.BigDecimal
 
-class Account(val name: String) {
-    var id: Int = 0
-    var balance: BigDecimal = BigDecimal("0.00")
-
+class Account(var id: Int = 0, val name: String, var balance: BigDecimal = BigDecimal("0.00")) {
     init {
-        id = kotlin.random.Random.nextInt(1, 100000)
+        if(id == 0) {
+            id = kotlin.random.Random.nextInt(1, 100000)
+        }
     }
 
     fun deposit(amount: BigDecimal) {
@@ -14,6 +13,10 @@ class Account(val name: String) {
 
     fun withdraw(amount: BigDecimal) {
         balance = balance.subtract(amount)
+    }
+
+    fun printInfo() {
+        println("Account $id: $name ($$balance)")
     }
 }
 

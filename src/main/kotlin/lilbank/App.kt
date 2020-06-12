@@ -8,6 +8,7 @@ import java.math.BigDecimal
 
 import Account
 import Bank
+import lilbank.adapters.AccountRepository
 
 fun getBank() : Bank {
     return Bank("Bank of the Universe")
@@ -18,7 +19,7 @@ fun createAccount(bank: Bank) {
 
     print("Name: ")
     val name = readLine()!!
-    val account = Account(name)
+    val account = Account(name=name)
     bank.addAccount(account)
 
     println("Account ${account.name} with id ${account.id} created")
@@ -43,6 +44,12 @@ fun deposit(bank: Bank) {
 fun main() {
     val bank = getBank()
     println("Welcome to da '${bank.name}'!")
+
+    val accountRepo = AccountRepository()
+    accountRepo.list().forEach {
+        bank.addAccount(it)
+        it.printInfo()
+    }
 
     while (true) {
         print("Options:\n1) Create new account\n2) Deposit\n3) Withdraw\n> ")
